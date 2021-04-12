@@ -1,0 +1,155 @@
+program :=
+    [ module_definition ] { import_statement } { export_statement } { module_statement }
+
+module_definition :=
+    "module" qualified_name ";"
+
+import_statement :=
+    "import" qualified_name ";"
+
+export_statement :=
+    "export" name { "," name } ";"
+
+module_statement :=
+    def_statement
+
+def_statement :=
+    "def" name ":" ( type_statement | sub_statement )    
+
+type_statement :=
+    "type" "{" type_field { type_field } "}"
+
+sub_statement :=
+    "sub" "(" parameter { "," parameter } ")" [ "->" typename ] "{" statement { statement } "}"
+
+statement :=
+    def_statement
+    | sub_statement
+    | var_statement
+    | if_statement
+    | loop_statement
+    | when_statement
+    | call_statement
+    | assign_statement
+    | branch_statement
+
+var_statement :=
+    "var" name ":" typename 
+    | "var" name [ ":" typename ] "=" expression
+
+if_statement :=
+    "if" "(" expression ")" "{" { statement } "}"
+    { "elif" "(" expression ")" "{" {statement } "}"
+    [ "else" "{" { statement } "}" ]
+
+loop_statement :=
+    for_statement
+    | while_statement
+    | do_statement
+
+for_statement :=
+    "for" "(" "var" name "in" for_range ")" "{" { statement } "}"
+
+for_range :=
+    int_literal ".." int_literal
+    | "range" "(" int_literal ")"
+    | "range" "(" name ")"
+
+while_statement :=
+    "while" "(" expression ")" "{" { statement } "}"
+
+do_statement :=
+    "do" "{" statement "}" "(" expression ")"
+
+when_statement :=
+    "when" "(" expression ")" "{" when_case "}"
+
+when_case :=
+    "is" expression "{" { statement } "}"
+
+call_statement :=
+    qualified_name "(" [ expression { "," expression } ] ")" ";"
+
+assign_statement :=
+    identifier "=" expression ";"
+
+branch_statement :=
+    break_statement
+    | continue_statement
+    | return_statement
+    
+break_statement :=
+    "break" ";"
+
+continue_statement :=
+    "continue" ";"
+
+return_statement :=
+    "return" [ expression ] ";"
+
+qualified_name :=
+    { name "::" } name
+
+expression :=
+    bool_literal
+    | int_literal
+    | real_literal
+    | str_literal
+    | object_literal
+    | array_literal
+    | binary_op
+    | unary_op
+    | call_expression
+    | identifier
+    | "(" expression ")"
+
+identifier :=
+    name [ "[" expression "]" ] [ "." identifier ]
+
+object_literal :=
+    name "{" [ expression { "," expression } ] "}"
+
+array_literal :=
+    "[" [ expression { "," expression } ] "]"
+
+binary_op :=
+    expression "*" expression
+    | expression "/" expression
+    | expression "%" expression
+    | expression "+" expression
+    | expression "-" expression
+    | expression "<" expression
+    | expression "<=" expression
+    | expression ">" expression
+    | expression ">=" expression
+    | expression "==" expression
+    | expression "!=" expression
+    | expression "&" expression
+    | expression "^" expression
+    | expression "|" expression
+    | expression "&&" expression
+    | expression "||" expression
+
+unary_op :=
+    expression "-" expression
+    | expression "!" expression
+    | expression "~" expression
+
+call_expression :=
+    qualified_name "(" [ expression { "," expression } ] ")"
+
+bool_literal :=
+    "true" | "false"
+
+int_literal :=
+    ? [0-9][0-9]* ?
+
+real_literal :=
+    ? [0-9]*\.[0-9][0-9]* ?
+    | ? [0-9][0-9]*\.[0-9]* ?
+
+str_literal :=
+    ? \"[^\"\n\r]\" ?
+
+name :=
+    ? [a-zA-Z][a-zA-Z0-9_]* ?
