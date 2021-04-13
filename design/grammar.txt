@@ -62,7 +62,7 @@ do_statement :=
     "do" "{" statement "}" "(" expression ")"
 
 when_statement :=
-    "when" "(" expression ")" "{" when_case "}"
+    "when" "(" expression ")" "{" when_case "}" [ "else" "{" { statement } "}" ]
 
 when_case :=
     "is" expression "{" { statement } "}"

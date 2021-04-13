@@ -4,7 +4,7 @@ RM := rm -rf
 MKDIR := mkdir -p
 AR=ar -r
 
-CFLAGS := -Wall --std=c++17
+CFLAGS := -Wall --std=c++17 -Isrc/compiler -Isrc/compiler/ast
 
 ifdef RELEASE
 CFLAGS += -O3
@@ -20,6 +20,7 @@ UNIT_TEST_CFLAGS := -Itests/unit/include
 
 BINARY := zeelang
 OBJECTS := \
+	obj/ast.o \
 	obj/main.o
 
 all: $(BINARY) $(UNIT_TEST_LIB)
@@ -38,6 +39,12 @@ obj/%.o: tests/unit/%.cpp | obj
 	$(CC) $(CFLAGS) $(UNIT_TEST_CFLAGS) -c -o $@ $<
 
 obj/%.o: src/%.cpp | obj
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+obj/%.o: src/compiler/%.cpp | obj
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+obj/%.o: src/compiler/ast/%.cpp | obj
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 obj:
